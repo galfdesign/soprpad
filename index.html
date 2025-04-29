@@ -302,5 +302,37 @@
             }
         }
     </script>
+    <script>
+  // Проверяем, открыто ли в Telegram
+  if (navigator.userAgent.includes('Telegram')) {
+    // Если это WebApp
+    if (window.Telegram && Telegram.WebApp.initData) {
+      Telegram.WebApp.expand();
+    } 
+    // Если обычное окно Telegram
+    else {
+      // Показываем кнопку как fallback
+      const btn = document.createElement('button');
+      btn.textContent = 'Открыть калькулятор';
+      btn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 24px;
+        background: #0088cc;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        z-index: 1000;
+      `;
+      btn.onclick = () => {
+        window.location.href = 'https://t.me/your_bot_username?startapp=webapp';
+      };
+      document.body.appendChild(btn);
+    }
+  }
+</script>
 </body>
 </html>
