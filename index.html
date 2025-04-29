@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta property="og:title" content="Калькулятор потерь давления">
+    <meta property="og:description" content="Профессиональный расчет потерь давления в радиаторах">
+    <meta property="og:url" content="https://ваш-логин.github.io/репозиторий/">
+    <meta property="og:type" content="website">
+    <title>Калькулятор потерь давления</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            -webkit-text-size-adjust: 100%;
+        }
+        .container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #006699;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #e8f4fc;
+            border-radius: 5px;
+            display: none;
+            font-size: 14px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            margin-top: 10px;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 18px;
+            }
+            button {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Калькулятор потерь давления в радиаторах</h1>
+        
+        <div class="form-group">
+            <label for="radiatorType">Тип радиатора:</label>
+            <select id="radiatorType">
+                <option value="type1">Тип 1 (стандартный)</option>
+                <option value="type2">Тип 2 (с конвектором)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="radiatorSize">Размер радиатора (высота x длина, мм):</label>
+            <select id="radiatorSize">
+                <option value="300x400">300 x 400</option>
+                <option value="300x600">300 x 600</option>
+                <option value="300x800">300 x 800</option>
+                <option value="300x1000">300 x 1000</option>
+                <option value="300x1200">300 x 1200</option>
+                <option value="300x1400">300 x 1400</option>
+                <option value="300x1600">300 x 1600</option>
+                <option value="300x1800">300 x 1800</option>
+                <option value="300x2000">300 x 2000</option>
+                <option value="500x400">500 x 400</option>
+                <option value="500x600">500 x 600</option>
+                <option value="500x800">500 x 800</option>
+                <option value="500x1000">500 x 1000</option>
+                <option value="500x1200">500 x 1200</option>
+                <option value="500x1400">500 x 1400</option>
+                <option value="500x1600">500 x 1600</option>
+                <option value="500x1800">500 x 1800</option>
+                <option value="500x2000">500 x 2000</option>
+                <option value="600x400">600 x 400</option>
+                <option value="600x600">600 x 600</option>
+                <option value="600x800">600 x 800</option>
+                <option value="600x1000">600 x 1000</option>
+                <option value="600x1200">600 x 1200</option>
+                <option value="600x1400">600 x 1400</option>
+                <option value="600x1600">600 x 1600</option>
+                <option value="600x1800">600 x 1800</option>
+                <option value="600x2000">600 x 2000</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="flowRate">Расход теплоносителя (л/ч):</label>
+            <input type="number" id="flowRate" min="1" value="100">
+        </div>
+        
+        <div class="form-group">
+            <label for="connectionType">Тип подключения:</label>
+            <select id="connectionType">
+                <option value="diagonal">Диагональное</option>
+                <option value="bottom">Нижнее</option>
+                <option value="side">Боковое</option>
+            </select>
+        </div>
+        
+        <button onclick="calculatePressureDrop()">Рассчитать</button>
+        
+        <div id="error" class="error"></div>
+        
+        <div id="result" class="result">
+            <h3>Результаты расчета:</h3>
+            <p>Потеря давления: <span id="pressureDrop">0</span> мбар</p>
+            <p>Рекомендуемый насос: <span id="pumpRecommendation">-</span></p>
+        </div>
+    </div>
+
+    <div class="footer">GalfDesign</div>
+
+    <script>
+        // Автоматическое открытие WebApp в Telegram
+        if (window.Telegram && Telegram.WebApp.initData) {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+        } 
+        else if (navigator.userAgent.includes('Telegram')) {
+            window.location.href = "https://t.me/ваш_бот_username?startapp=calc";
+        }
+
+        // Коэффициенты для расчета потерь давления
+        const pressureDropData = {
+            'type1': {
+                '300x400': { k: 0.02 },
+                '300x600': { k: 0.018 },
+                '300x800': { k: 0.016 },
+                '300x1000': { k: 0.015 },
+                '300x1200': { k: 0.014 },
+                '300x1400': { k: 0.013 },
+                '300x1600': { k: 0.012 },
+                '300x1800': { k: 0.011 },
+                '300x2000': { k: 0.010 },
+                '500x400': { k: 0.025 },
+                '500x600': { k: 0.022 },
+                '500x800': { k: 0.020 },
+                '500x1000': { k: 0.018 },
+                '500x1200': { k: 0.016 },
+                '500x1400': { k: 0.015 },
+                '500x1600': { k: 0.014 },
+                '500x1800': { k: 0.013 },
+                '500x2000': { k: 0.012 },
+                '600x400': { k: 0.028 },
+                '600x600': { k: 0.025 },
+                '600x800': { k: 0.022 },
+                '600x1000': { k: 0.020 },
+                '600x1200': { k: 0.018 },
+                '600x1400': { k: 0.016 },
+                '600x1600': { k: 0.015 },
+                '600x1800': { k: 0.014 },
+                '600x2000': { k: 0.013 }
+            },
+            'type2': {
+                '300x400': { k: 0.03 },
+                '300x600': { k: 0.028 },
+                '300x800': { k: 0.026 },
+                '300x1000': { k: 0.024 },
+                '300x1200': { k: 0.022 },
+                '300x1400': { k: 0.020 },
+                '300x1600': { k: 0.018 },
+                '300x1800': { k: 0.016 },
+                '300x2000': { k: 0.015 },
+                '500x400': { k: 0.035 },
+                '500x600': { k: 0.032 },
+                '500x800': { k: 0.030 },
+                '500x1000': { k: 0.028 },
+                '500x1200': { k: 0.026 },
+                '500x1400': { k: 0.024 },
+                '500x1600': { k: 0.022 },
+                '500x1800': { k: 0.020 },
+                '500x2000': { k: 0.018 },
+                '600x400': { k: 0.040 },
+                '600x600': { k: 0.037 },
+                '600x800': { k: 0.034 },
+                '600x1000': { k: 0.032 },
+                '600x1200': { k: 0.030 },
+                '600x1400': { k: 0.028 },
+                '600x1600': { k: 0.026 },
+                '600x1800': { k: 0.024 },
+                '600x2000': { k: 0.022 }
+            }
+        };
+        
+        // Коэффициенты для типа подключения
+        const connectionCoefficients = {
+            'diagonal': 1.0,
+            'bottom': 1.2,
+            'side': 1.1
+        };
+        
+        function calculatePressureDrop() {
+            const radiatorType = document.getElementById('radiatorType').value;
+            const radiatorSize = document.getElementById('radiatorSize').value;
+            const flowRate = parseFloat(document.getElementById('flowRate').value);
+            const connectionType = document.getElementById('connectionType').value;
+            
+            const errorElement = document.getElementById('error');
+            errorElement.textContent = '';
+            
+            // Проверка ввода
+            if (isNaN(flowRate) || flowRate <= 0) {
+                errorElement.textContent = 'Пожалуйста, введите корректное значение расхода теплоносителя';
+                return;
+            }
+            
+            // Получаем данные для выбранного радиатора
+            const radiatorData = pressureDropData[radiatorType][radiatorSize];
+            if (!radiatorData) {
+                errorElement.textContent = 'Данные для выбранного радиатора не найдены';
+                return;
+            }
+            
+            // Расчет потерь давления
+            const basePressureDrop = radiatorData.k * Math.pow(flowRate / 100, 1.8);
+            const connectionCoefficient = connectionCoefficients[connectionType] || 1.0;
+            const totalPressureDrop = basePressureDrop * connectionCoefficient;
+            
+            // Округление до 2 знаков после запятой
+            const roundedPressureDrop = Math.round(totalPressureDrop * 100) / 100;
+            
+            // Рекомендация насоса
+            let pumpRecommendation = '';
+            if (roundedPressureDrop < 10) {
+                pumpRecommendation = 'Маломощный циркуляционный насос';
+            } else if (roundedPressureDrop < 30) {
+                pumpRecommendation = 'Среднемощный циркуляционный насос';
+            } else {
+                pumpRecommendation = 'Мощный циркуляционный насос';
+            }
+            
+            // Отображение результатов
+            document.getElementById('pressureDrop').textContent = roundedPressureDrop;
+            document.getElementById('pumpRecommendation').textContent = pumpRecommendation;
+            document.getElementById('result').style.display = 'block';
+            
+            // Прокрутка к результатам
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+
+            // Если в WebApp, отправляем данные в Telegram
+            if (window.Telegram && Telegram.WebApp.sendData) {
+                const data = {
+                    pressureDrop: roundedPressureDrop,
+                    pumpRecommendation: pumpRecommendation
+                };
+                Telegram.WebApp.sendData(JSON.stringify(data));
+            }
+        }
+    </script>
+</body>
+</html>
